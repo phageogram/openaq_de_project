@@ -7,7 +7,6 @@ load_dotenv()
 
 api_key = os.getenv("OPENAQ-API-KEY")
 
-
 class CountryTable:
     def __init__(self, api_key):
         self.client = OpenAQ(api_key=api_key)
@@ -54,4 +53,3 @@ class CountryTable:
     def close(self):
         # Close httpx connection to OpenAQ
         self.client.close()
-
