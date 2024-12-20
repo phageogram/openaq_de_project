@@ -14,7 +14,6 @@ load_dotenv()
 
 api_key = os.getenv("OPENAQ-API-KEY")
 
-#settings = Settings()
 client = OpenAQ(api_key=api_key)
 
 results = client.countries.list(limit=10)
@@ -37,6 +36,12 @@ merged_df = pd.merge(explode_df, expanded_data, left_on='id', right_on='location
 merged_df = merged_df.drop("parameters", axis=1)
 print(merged_df.head())
 
+merged_df.rename(columns={"id_x":"country_id", "name_x":"country_name", "id_y":"param_id", "name_y": "param_name"}, inplace=True)
+merged_df = merged_df.drop("location_code", axis=1)
+
+print(merged_df.columns)
+print(merged_df.head())
+
 """
 normalized_df = pd.json_normalize(expanded_params_df["expanded_data"])
 
@@ -45,7 +50,5 @@ print(expanded_params_df.head())
 print(normalized_df.head())
 """
 #client.close()
-
 #print(df.head())
-
 #df.to_csv('out.csv', index=False)
