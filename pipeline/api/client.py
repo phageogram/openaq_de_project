@@ -22,5 +22,5 @@ class OpenAQClient:
             raise APIClientError(f"API request failed {str(e)}")
     
     def close(self):
-        # handle API client
+        # exit API client
         self.client.close()
