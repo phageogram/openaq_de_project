@@ -17,17 +17,15 @@ class CountryProcessor(BaseProcessor):
 
         df =  pd.DataFrame(self.data)
 
-        exploded_df = df.explode("parameters")
-        print(type(exploded_df["parameters"]))
-
-        exploded_df['parameters'] = exploded_df.apply(
-            lambda row: {**row['parameters'], 'location_code': row['id']}
-            , axis=1)
+        df["parameters"] = df.apply(
+            lambda row: [
+                {**param, 'location_code': row["id"]} for param in row["parameters"]
+                ], axis=1)
         
-        expanded_params = pd.json_normalize(exploded_df["parameters"])
+        expanded_params = pd.json_normalize(df["parameters"].explode())
 
         merged_df = pd.merge(
-            exploded_df, expanded_params, left_on='id', right_on='location_code', how="left"
+            df, expanded_params, left_on='id', right_on='location_code', how="left"
         )
 
         merged_df.drop(["parameters", "location_code"], axis=1, inplace=True)
