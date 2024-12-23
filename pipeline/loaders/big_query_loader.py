@@ -7,8 +7,10 @@ class BigQueryLoader:
         self.table_ref = f"{project_id}.{dataset_id}.{table_id}"
     
     def load_data(self, df):
-        job_config = bigquery.LoadJobConfig(write_disposition="WRITE_TRUNCATE")
-        job = self.client.load_table_from_dataframe(dataframe, self.table_ref, job_config)
+        job_config = bigquery.LoadJobConfig(
+            write_disposition="WRITE_APPEND",
+            autodetect=True)
+        job = self.client.load_table_from_dataframe(df, self.table_ref, job_config)
 
         job.result()
         print(f"Data successfully load to {self.table_ref}")
