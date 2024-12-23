@@ -1,17 +1,35 @@
 import pandas as pd
+import json
 from .base_processor import BaseProcessor
 
 class CountryProcessor(BaseProcessor):
+    def __init__(self,data):
+        super().__init__(data)
     
     def process(self):
         # Explode and normalize data
+        self.validate_data()
+
         if "parameters" not in self.data.columns:
             raise ValueError("Missing 'parameters' column")
         if self.data is None:
             raise ValueError("No response")
+
+        df =  pd.DataFrame(self.data)
+
+        df["parameters"] = df["parameters"].apply(
+            lambda x: x.replace("'", '"') if isinstance(x, str) else x
+        )
+
+        df["parameters"] = df["parameters"].apply( lambda row: self.safe_json_load(row))
         
         exploded_df = self.data.explode("parameters")
-        explode_df['parameters'] = explode_df.apply(lambda row: {**row['parameters'], 'location_code': row['id']}, axis=1)
+        print(type(exploded_df["parameters"]))
+
+        exploded_df['parameters'] = exploded_df.apply(
+            lambda row: {**row['parameters'], 'location_code': row['id']}
+            , axis=1)
+        
         expanded_params = pd.json_normalize(exploded_df["parameters"])
 
         merged_df = pd.merge(
@@ -20,3 +38,11 @@ class CountryProcessor(BaseProcessor):
 
         merged_df.drop(["parameters", "location_code"], axis=1, inplace=True)
         return merged_df
+
+    def safe_json_load(self, value):
+        if value in [None, '', ' ', 'null', 'NaN']:
+            return None
+        try:
+            return json.loads(value)
+        except json.JSONDecodeError:
+            return None
