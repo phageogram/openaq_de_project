@@ -17,14 +17,6 @@ class CountryProcessor(BaseProcessor):
 
         df =  pd.DataFrame(self.data)
 
-        """
-        df["parameters"] = df["parameters"].apply(
-            lambda x: x.replace("'", '"') if isinstance(x, str) else x
-        )
-
-        df["parameters"] = df["parameters"].apply( lambda row: self.safe_json_load(row))
-        """
-
         exploded_df = df.explode("parameters")
         print(type(exploded_df["parameters"]))
 
@@ -40,18 +32,15 @@ class CountryProcessor(BaseProcessor):
 
         merged_df.drop(["parameters", "location_code"], axis=1, inplace=True)
 
+        merged_df["display_name"] = merged_df["display_name"].astype(str)
+
         merged_df = merged_df.rename(columns={
             "id_x": "id",
             "name_x": "name",
             "id_y": "param_id",
             "name_y": "param_name"
             })
-        return merged_df
 
-    def safe_json_load(self, value):
-        if value in [None, '', ' ', 'null', 'NaN']:
-            return None
-        try:
-            return json.loads(value)
-        except json.JSONDecodeError:
-            return None
+        merged_df["pk"] = merged_df["id"].astype(str) + merged_df["param_id"].astype(str)
+
+        return merged_df

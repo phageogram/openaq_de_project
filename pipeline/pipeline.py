@@ -1,12 +1,33 @@
 import os
+from google.cloud import bigquery
 from dotenv import load_dotenv
 from pipeline.api.client import OpenAQClient
 from pipeline.processors.countries_processor import CountryProcessor
 from pipeline.loaders.big_query_loader import BigQueryLoader
 
+def define_schema(table_id):
+    if table_id == "countries":
+        return [
+            bigquery.SchemaField("id", "INT", mode="REQUIRED"),
+            bigquery.SchemaField("code", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("name", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("datetime_first", "DATETIME", mode="NULLABLE"),
+            bigquery.SchemaField("datetime_last", "DATETIME", mode="NULLABLE"),
+            bigquery.SchemaField("param_id", "INT", mode="REQUIRED"),
+            bigquery.SchemaField("param_name", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("units", "STRING", mode="REQUIRED"),
+            bigquery.SchemaField("display_name", "STRING", mode="NULLABLE"),
+            bigquery.SchemaField("pk", "STRING", mode="REQUIRED")
+        ]
+    else:
+        raise ValueError(f"No schema defined for table: {table_id}")
+
 def run_pipeline(endpoint, table_id, limit=10):
 
     load_dotenv()
+
+    # define schema for the table to load
+    schema = define_schema(table_id)
 
     google_credentials_path = os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
     if google_credentials_path is None:
@@ -36,7 +57,7 @@ def run_pipeline(endpoint, table_id, limit=10):
         processed_data = processor.process()
 
         # Load data
-        loader.load_data(processed_data)
+        loader.load_data(processed_data, schema)
     
     finally:
         api_client.close()
