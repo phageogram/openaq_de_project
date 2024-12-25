@@ -46,6 +46,7 @@ pytest==8.3.4
 python-dateutil==2.9.0.post0
 python-dotenv==1.0.1
 pytz==2024.2
+ratelimit==2.2.1
 requests==2.32.3
 rsa==4.9
 seaborn==0.13.2

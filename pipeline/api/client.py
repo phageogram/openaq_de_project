@@ -1,10 +1,13 @@
 from .exceptions import APIClientError
 from openaq import OpenAQ
+from ratelimit import sleep_and_retry, limits
 
 class OpenAQClient:
     def __init__(self, api_key):
         self.client = OpenAQ(api_key=api_key)
 
+    @sleep_and_retry
+    @limits(calls=60, period=60)
     def fetch_data(self, endpoint, **params):
         try:
             if endpoint == "countries":
