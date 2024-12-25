@@ -4,3 +4,4 @@ __pycache__/
 .env
 countries_output.csv
 keys/
+airflow-env/
