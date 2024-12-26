@@ -5,3 +5,7 @@ __pycache__/
 countries_output.csv
 keys/
 airflow-env/
+airflow/logs
+.airflow.cfg
+.airflow.db
+airflow/standalone_admin_password.txt
