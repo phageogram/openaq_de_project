@@ -6,7 +6,7 @@ from pipeline.processors.countries_processor import CountryProcessor
 from pipeline.loaders.big_query_loader import BigQueryLoader
 from .schemas import define_schema
 
-def run_pipeline(endpoint, table_id, limit=10):
+def run_pipeline(endpoint, table_id, limit):
 
     load_dotenv()
 
@@ -47,4 +47,4 @@ def run_pipeline(endpoint, table_id, limit=10):
         api_client.close()
     
 if __name__ == "__main__":
-    run_pipeline(endpoint="countries", table_id="countries", limit=10)
+    run_pipeline(endpoint="countries", table_id="countries", limit=200)
