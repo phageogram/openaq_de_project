@@ -17,6 +17,7 @@ google-cloud-core==2.4.1
 google-crc32c==1.6.0
 google-resumable-media==2.7.2
 googleapis-common-protos==1.66.0
+graphviz==0.20.3
 grpcio==1.68.1
 grpcio-status==1.68.1
 h11==0.14.0
