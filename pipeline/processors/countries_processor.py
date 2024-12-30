@@ -39,15 +39,11 @@ class CountryProcessor(BaseProcessor):
             "name_y": "param_name"
             })
 
+        merged_df["id"] = merged_df["id"].abs()
+
         merged_df["pk"] = merged_df["id"].astype(str) + merged_df["param_id"].astype(str)
 
-        merged_df["datetime_first"] = pd.to_datetime(
-            merged_df["datetime_first"].str.replace("Z", "+00:00"),
-            format="ISO8601"
-            )
-        merged_df["datetime_last"] = pd.to_datetime(
-            merged_df["datetime_last"].str.replace("Z", "+00:00"),
-            format="ISO8601"
-            )
+        merged_df["datetime_first"] = merged_df["datetime_first"].astype(str)
+        merged_df["datetime_last"] = merged_df["datetime_last"].astype(str)
 
         return merged_df
